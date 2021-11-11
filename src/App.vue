@@ -1,14 +1,127 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="isAuth = true"/>
+  <main>
+    <router-view />
+  </main>
+  <Footer />
 </template>
+<script>
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
+export default {
+  name: "App",
+  components: {
+    Header,
+    Footer,
+  },
+  data() {
+    return {
+      isAuth: false,
+      isAdmin: true,
+      block: false,
+    };
+  },
+  methods: {},
+  mounted() {},
+}
+</script>
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+:root {
+  --header-background: #16223f;
+  /* --header-background: #0d1336; */
+  --bg: #f7f7f7;
+  --bc-book: #eb2d6d;
+  /* --bc-book:#ff9800; */
+  --bg-main-button: var(--bc-book);
+  --bg-hover-main-button: #16223f60;
+  --bg-border: var(--bc-book);
+  --bg-dropdown: #0d1336;
+  --bg-hover-dropdown: #0066cd;
+  --in-hover-dropdown: #1eaca0;
+  --color-clear: white;
+  --color-dark:#16223f;
+  --radius: 0.5rem;
+  --selector: var(--bc-book);
+  --border-input: var(--header-background);
+  --scrollbar-color: var(--bc-book);
+  --sub-color: #16223fc9;
+  --color-nav: #22294c;
+  --bg-drop:var(--header-background);
+  --drop-hover:#22294c;
+}
+* {
+  font: 11pt "Poppins";
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: var(--bg);
+  overflow-x: hidden;
+}
+/* ::-webkit-scrollbar {
+    height: 1rem;
+    width: 1rem;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    background-color: var(--scrollbar-color);
+    border: .1rem solid transparent;
+    border-radius: 1rem;
+} */
+main {
+  min-height: 78.9vh;
+  /* min-height: 74.9vh; */
+  padding-top: 2rem;
+}
+button {
+  border: none;
+  background-color: transparent;
+  background-image: none;
+  cursor: pointer;
+  box-shadow: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}
+input {
+  border: none;
+  text-align: center;
+  background-image: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  outline: 0;
+  border-radius: var(--radius);
+  height: 2rem;
+}
+input:valid {
+  border: 0.1rem solid var(--valid);
+}
+input:invalid {
+  border: 0.1rem solid var(--invalid);
+}
+input::-webkit-validation-bubble {
+  border: 0.1rem solid var(--valid);
+}
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+h2 {
+  font-size: 1.2rem;
+  /* font-weight: bold; */
+}
+.rt {
+  text-decoration: none;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -16,15 +129,79 @@
 }
 
 #nav {
-  padding: 30px;
+  padding: 1.5rem;
 }
 
 #nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: #2a68a5;
+  text-decoration: none;
 }
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+.rt {
+  color: var(--color-clear);
+}
+.main-button {
+  background-color: var(--bg-main-button);
+  padding: 0.7rem 1.3rem;
+  border-radius: 0.5rem;
+  color: var(--color-clear);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border: 0.2rem solid transparent;
+}
+.main-button:hover {
+  box-shadow: 0 0.2rem 0.3rem 0.1rem var(--bg-hover-main-button);
+  z-index: 3;
+}
+.sub-button {
+  background-color: var(--color-clear);
+  padding: 0.7rem 1.3rem;
+  border-radius: 0.5rem;
+  color: var(--bg-main-button);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border: 0.2rem solid var(--bg-main-button);
+}
+.sub-button:hover {
+  box-shadow: 0 0.2rem 0.3rem 0.1rem var(--bg-hover-main-button);
+  z-index: 3;
+}
+@keyframes iconmove {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes tumble {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  15% {
+    transform: translateY(-5rem) rotate(360deg);
+  }
+  30% {
+    transform: translateY(0) rotate(-360deg);
+  }
+  45% {
+    transform: translateY(-7rem) rotate(360deg);
+  }
+  60% {
+    transform: translateY(0) rotate(-360deg);
+  }
+  75% {
+    transform: translateY(-5rem) rotate(360deg);
+  }
+  100% {
+    transform: translateY(0) rotate(-360deg);
+  }
 }
 </style>
