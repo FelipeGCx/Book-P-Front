@@ -278,8 +278,9 @@ header {
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   text-decoration: none;
+  padding: 0 .5rem;
 }
 .logo svg {
   fill: var(--bc-book);

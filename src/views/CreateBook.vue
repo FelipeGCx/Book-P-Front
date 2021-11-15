@@ -1,7 +1,7 @@
  <template>
   <div class="component">
     <h1>Nuevo Registro</h1>
-    <form @submit.prevent="saveBook">
+    <form @submit.prevent="showModal">
       <div class="first-container">
         <div class="inputs">
           <div class="containter-input">
@@ -87,16 +87,40 @@
         </div>
       </div>
     </form>
+    <Confirmation
+      :msg="modal.message"
+      :animation="modal.animation"
+      :successMsg="modal.successMsg"
+      :errorMsg="modal.errorMsg"
+      :finish="modal.finish"
+      :error="modal.error"
+      v-show="modal.visible"
+      @accept="saveBook"
+      @close="modal.visible = false"
+    />
   </div>
 </template>
  
  <script>
+import Confirmation from "@/components/Confirmation.vue";
 import { app } from "../utils/fb";
 import "@/data.js";
 export default {
   name: "CreateBook",
+  components: {
+    Confirmation,
+  },
   data() {
     return {
+      modal: {
+        visible: false,
+        message: "¿Guardar Registro?",
+        animation: false,
+        successMsg: "¡Registro Creado!",
+        errorMsg: "¡Algo Fallo!",
+        finish: false,
+        error: false,
+      },
       file: {
         name: null,
       },
@@ -108,9 +132,9 @@ export default {
         category: null,
         editorial: null,
         status: null,
-        isbn:null,
+        isbn: null,
         poster: require("@/assets/images/NotFound.svg"),
-        resume:null,
+        resume: null,
       },
       categories: ["Selecione un Genero"],
       status: {
@@ -133,26 +157,6 @@ export default {
       this.book.poster = objectURL;
     },
     async saveImage() {
-      new Compressor(this.file, {
-        quality: 0.6,
-
-        // The compression process is asynchronous,
-        // which means you have to access the `result` in the `success` hook function.
-        success(result) {
-          const formData = new FormData();
-
-          // The third parameter is required for server
-          formData.append("file", result, result.name);
-
-          // Send the compressed image file to server with XMLHttpRequest.
-          axios.post("/path/to/upload", formData).then(() => {
-            console.log("Upload success");
-          });
-        },
-        error(err) {
-          console.log(err.message);
-        },
-      });
       const storageRef = app.storage().ref();
       const filePath = storageRef.child(this.file.name);
       await filePath.put(this.file);
@@ -170,15 +174,26 @@ export default {
       window.scrollTo(0, 0);
     },
     async saveBook() {
-      await this.saveImage();
+      this.modal.animation = true;
+      setTimeout(() => {
+        this.modal.animation = false;
+        this.modal.finish = true;
+      }, 5000);
+      setTimeout(() => {
+        this.modal.visible = false;
+      }, 7000);
+      // await this.saveImage();
     },
-    loadCategories(){
+    loadCategories() {
       for (const key in registers) {
-          const element = registers[key].category;
-          if(!this.categories.includes(element)){
-            this.categories.push(element);
-          }
+        const element = registers[key].category;
+        if (!this.categories.includes(element)) {
+          this.categories.push(element);
+        }
       }
+    },
+    showModal() {
+      this.modal.visible = true;
     },
   },
   mounted() {

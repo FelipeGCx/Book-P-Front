@@ -11,7 +11,7 @@
       >
         <Slide v-for="(slide, index) in carouselSlides" :key="index">
           <div v-show="currentSlide === index + 1" class="slide-info">
-            <img :src="require(`@/assets/slices/${slide}.svg`)" />
+            <img :src="require(`@/assets/slides/${slide}.svg`)" />
           </div>
         </Slide>
       </Carousel>
@@ -138,6 +138,7 @@ import "@/data.js";
 export default {
   name: "Home",
   components: {
+    // Carouselv2,
     Carousel,
     Slide,
   },
@@ -314,6 +315,10 @@ export default {
   justify-content: center;
   margin: 0.5rem;
 }
+/* .phrases{
+  margin: 0 11vw;
+
+} */
 
 .carousel {
   position: relative;
@@ -331,7 +336,7 @@ export default {
   width: 100%;
   max-height: 100%;
   height: 100%;
-  background-color: #8a2be2;
+  background-color: var(--bg-banner);
   border-radius: var(--radius);
 }
 .books {

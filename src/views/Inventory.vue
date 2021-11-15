@@ -44,16 +44,29 @@
         </svg>
       </router-link>
     </nav>
+    <Confirmation
+      :msg="modalDelete.message"
+      :animation="modalDelete.animation"
+      :successMsg="modalDelete.successMsg"
+      :errorMsg="modalDelete.errorMsg"
+      :finish="modalDelete.finish"
+      :error="modalDelete.error"
+      v-show="modalDelete.visible"
+      @accept="deleteBook"
+      @close="modalDelete.visible = false"
+    />
   </div>
 </template>
 
 <script>
+import Confirmation from "@/components/Confirmation.vue";
 import Table from "@/components/Table.vue";
 import "@/data.js";
 export default {
   name: "Inventory",
   components: {
     Table,
+    Confirmation,
   },
   data() {
     return {
@@ -62,6 +75,15 @@ export default {
       dataInPage: [],
       actualPage: 1,
       pages: null,
+      modalDelete: {
+        visible: false,
+        message: "¿Eliminar Registro?",
+        animation: false,
+        successMsg: "¡Registro Eliminado!",
+        errorMsg: "¡Algo Fallo!",
+        finish: false,
+        error: false,
+      },
     };
   },
   methods: {
@@ -92,6 +114,7 @@ export default {
     isActive(numPage) {
       return numPage == this.actualPage ? "active" : "";
     },
+    deleteBook(){},
   },
   mounted() {
     this.actualPage = parseInt(this.$route.params.id);
@@ -160,5 +183,8 @@ svg {
 .next {
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
+}
+a{
+  text-decoration: none;
 }
 </style>

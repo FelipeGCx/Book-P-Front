@@ -101,14 +101,40 @@
         </div>
       </div>
     </form>
+    <Confirmation
+      :msg="modalUpdate.message"
+      :animation="modalUpdate.animation"
+      :successMsg="modalUpdate.successMsg"
+      :errorMsg="modalUpdate.errorMsg"
+      :finish="modalUpdate.finish"
+      :error="modalUpdate.error"
+      v-show="modalUpdate.visible"
+      @accept="updateBook"
+      @close="modalUpdate.visible = false"
+    />
+    <Confirmation
+      :msg="modalDelete.message"
+      :animation="modalDelete.animation"
+      :successMsg="modalDelete.successMsg"
+      :errorMsg="modalDelete.errorMsg"
+      :finish="modalDelete.finish"
+      :error="modalDelete.error"
+      v-show="modalDelete.visible"
+      @accept="deleteBook"
+      @close="modalDelete.visible = false"
+    />
   </div>
 </template>
  
  <script>
 import { app } from "../utils/fb";
+import Confirmation from "@/components/Confirmation.vue";
 import "@/data.js";
 export default {
-  name: "CreateBook",
+  name: "UpdateBook",
+  components:{
+    Confirmation,
+  },
   data() {
     return {
       id:null,
@@ -136,6 +162,24 @@ export default {
           value: true,
           name: "En Prestamo",
         },
+      },
+      modalUpdate: {
+        visible: false,
+        message: "¿Actualizar Registro?",
+        animation: false,
+        successMsg: "¡Registro Actualizado!",
+        errorMsg: "¡Algo Fallo!",
+        finish: false,
+        error: false,
+      },
+      modalDelete: {
+        visible: false,
+        message: "¿Eliminar Registro?",
+        animation: false,
+        successMsg: "¡Registro Eliminado!",
+        errorMsg: "¡Algo Fallo!",
+        finish: false,
+        error: false,
       },
     };
   },
@@ -179,6 +223,8 @@ export default {
           }
       }
     },
+    updateBook(){},
+    deleteBook(){},
   },
   mounted() {
     this.loadCategories();

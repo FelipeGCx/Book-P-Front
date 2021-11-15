@@ -30,10 +30,8 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 :root {
   --header-background: #16223f;
-  /* --header-background: #0d1336; */
   --bg: #f7f7f7;
   --bc-book: #eb2d6d;
-  /* --bc-book:#ff9800; */
   --bg-main-button: var(--bc-book);
   --bg-hover-main-button: #16223f60;
   --bg-border: var(--bc-book);
@@ -50,6 +48,9 @@ export default {
   --color-nav: #22294c;
   --bg-drop:var(--header-background);
   --drop-hover:#22294c;
+  --bg-banner:#8a2be2;
+  /* --bg-book-anim:#e91e6300; */
+  --bg-book-anim:#eb2d6d;
 }
 * {
   font: 11pt "Poppins";
