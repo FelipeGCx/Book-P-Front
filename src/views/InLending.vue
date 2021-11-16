@@ -88,7 +88,7 @@ export default {
         let loan = {
           id: element.id,
           idUser: element.idUser,
-          user: `${this.users[key].firstname} ${this.users[key].lastname}`,
+          user: `${this.users.find(user => user.id == element.idUser).firstname} ${this.users.find(user => user.id == element.idUser).lastname}`,
           idBook: element.idBook,
           title: this.books.find(book => book.id == element.idBook).title.toString(),
           dateStart: element.dateStart,
