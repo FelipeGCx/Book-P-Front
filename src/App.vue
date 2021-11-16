@@ -1,7 +1,7 @@
 <template>
-  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="isAuth = true"/>
+  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="isAuth = true; isAdmin=true"/>
   <main>
-    <router-view />
+    <router-view :isAdmin="isAdmin"/>
   </main>
   <Footer />
 </template>
@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       isAuth: false,
-      isAdmin: true,
+      isAdmin: false,
       block: false,
     };
   },

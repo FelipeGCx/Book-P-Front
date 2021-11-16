@@ -32,6 +32,18 @@ const routes = [
 		meta: { title: 'Inventario de Libros' }
 	},
 	{
+		path: '/books/in-lending/page/:id',
+		name: 'InLending',
+		component: () => import('@/views/InLending.vue'),
+		meta: { title: 'Libros En Prestamo' }
+	},
+	{
+		path: '/user/:id',
+		name: 'User',
+		component: () => import('@/views/User.vue'),
+		meta: { title: 'Datos De Usuario' }
+	},
+	{
 	  path: '/:catchAll(.*)',
 	  name: 'NotFound',
 		component: () => import('@/views/NotFound.vue'),

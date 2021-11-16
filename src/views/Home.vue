@@ -138,13 +138,12 @@ import "@/data.js";
 export default {
   name: "Home",
   components: {
-    // Carouselv2,
     Carousel,
     Slide,
   },
+  props:["isAdmin"],
   data() {
     return {
-      isAdmin: true,
       books: [],
       filterBooks: [],
       dataInPage: [],
