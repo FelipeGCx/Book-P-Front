@@ -25,7 +25,7 @@
     </div>
     <div class="second-container">
       <p>{{ book.resume }}</p>
-      <button type="submit" class="main-button">Prestamo</button>
+      <button @click="makeLoan" class="main-button">Prestamo</button>
     </div>
   </div>
 </template>
@@ -56,23 +56,10 @@ export default {
   methods: {
     getData() {
       //   !HACER PETICIÓN PARA OBTENER LOS ATRIBUTOS DEL LIBRO
-      this.book = registers[this.id-1];
+      this.book = registers.filter((item) => item.id == this.id);
+      this.book = this.book[0];
       this.updateBorder();
       document.title = this.book.title;
-    },
-    fileSelected(e) {
-      this.file = e.target.files[0];
-      this.updateBorder();
-      const objectURL = URL.createObjectURL(this.file);
-      this.book.poster = objectURL;
-      // this.saveImage();
-    },
-    async saveImage() {
-      const storageRef = app.storage().ref();
-      const filePath = storageRef.child(this.file.name);
-      await filePath.put(this.file);
-      console.log("archivo cargado");
-      this.book.poster = await filePath.getDownloadURL();
     },
     updateBorder() {
       if (this.book.status == null) {
@@ -85,10 +72,15 @@ export default {
       this.$router.push({ name: "Home" });
       window.scrollTo(0, 0);
     },
+    makeLoan(){
+      // let dateStart = new Date().toLocaleString("es-CO");
+      // let dateEnd = new Date();
+      // dateEnd.setDate(dateEnd.getDate() + 20);
+      // dateEnd = dateEnd.toLocaleString("es-CO");
+    },
   },
   mounted() {
     this.id = this.$route.params.id;
-    console.log(this.id);
     this.getData();
   },
 };
