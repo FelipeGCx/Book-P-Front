@@ -49,7 +49,11 @@
             />
           </svg>
         </router-link>
-        <button class="nav-button" @click="btnClicked('pres')" v-if="isAuth">
+        <router-link
+          class="rt | nav-button"
+          :to="{ name: 'Loans', params: { id: userId } }"
+          v-if="isAuth"
+        >
           <span class="pc">Prestamos</span>
           <svg
             class="mobile icons-mobile"
@@ -61,7 +65,7 @@
               d="M20,8v12c0,1.1-0.9,2-2,2H6c-1.1,0-2-0.9-2-2V8c0-1.86,1.28-3.41,3-3.86V3.5C7,2.67,7.67,2,8.5,2h0 C9.33,2,10,2.67,10,3.5V4h4V3.5C14,2.67,14.67,2,15.5,2h0C16.33,2,17,2.67,17,3.5v0.64C18.72,4.59,20,6.14,20,8z M6,13L6,13 c0,0.55,0.45,1,1,1h9v1c0,0.55,0.45,1,1,1h0c0.55,0,1-0.45,1-1v-2c0-0.55-0.45-1-1-1H7C6.45,12,6,12.45,6,13z"
             />
           </svg>
-        </button>
+        </router-link>
         <button
           :disabled="block"
           id="btn-account"
@@ -127,12 +131,18 @@
         >
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M6.14 11.86l-2.78 2.79c-.19.2-.19.51 0 .71l2.78 2.79c.31.32.85.09.85-.35V16H13c.55 0 1-.45 1-1s-.45-1-1-1H6.99v-1.79c0-.45-.54-.67-.85-.35zm14.51-3.21l-2.78-2.79c-.31-.32-.85-.09-.85.35V8H11c-.55 0-1 .45-1 1s.45 1 1 1h6.01v1.79c0 .45.54.67.85.35l2.78-2.79c.2-.19.2-.51.01-.7z"/>
+              <path
+                d="M6.14 11.86l-2.78 2.79c-.19.2-.19.51 0 .71l2.78 2.79c.31.32.85.09.85-.35V16H13c.55 0 1-.45 1-1s-.45-1-1-1H6.99v-1.79c0-.45-.54-.67-.85-.35zm14.51-3.21l-2.78-2.79c-.31-.32-.85-.09-.85.35V8H11c-.55 0-1 .45-1 1s.45 1 1 1h6.01v1.79c0 .45.54.67.85.35l2.78-2.79c.2-.19.2-.51.01-.7z"
+              />
             </svg>
           </span>
           <span class="drop-text">En Prestamo</span>
         </router-link>
-        <div class="btn-drop" @click="btnClicked('settings')">
+        <router-link
+          class="btn-drop"
+          :to="{ name: 'Settings', params: { id: userId } }"
+          @click="clickDrop"
+        >
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
@@ -145,7 +155,7 @@
             </svg>
           </span>
           <span class="drop-text">Configuración</span>
-        </div>
+        </router-link>
         <div class="btn-drop" @click="btnClicked('logout')">
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -171,14 +181,12 @@ export default {
       drop: false,
       dropDisplay: "none",
       textBtnAccount: null,
+      userId: 0,
     };
   },
   methods: {
     btnClicked(btnId) {
       switch (btnId) {
-        case "nav-button-proyectos":
-          this.$emit("loadHome");
-          break;
         case "btn-account":
           if (this.isAuth) {
             this.dropSH();
@@ -187,13 +195,8 @@ export default {
             this.$emit("momentaneo");
           }
           break;
-        case "btn-messages":
-          break;
         case "logo":
           this.$emit("loadHome");
-          break;
-        case "settings":
-          this.$emit("loadSettings");
           break;
         case "logout":
           this.$emit("logoutClicked");
@@ -211,10 +214,28 @@ export default {
       this.drop = this.isAuth ? !this.drop : this.drop;
       this.dropDisplay = this.drop ? "flex" : "none";
     },
+    titleCase(str) {
+      str = str
+        .toLowerCase()
+        .split(" ")
+        .map(function (word) {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        });
+      return str.join(" ");
+    },
   },
   mounted() {
     if (this.isAuth) {
-      this.textBtnAccount = "Felipe Gomez";
+      this.textBtnAccount = this.titleCase(localStorage.getItem("name"));
+      this.userId = localStorage.getItem("userId");
+    } else {
+      this.textBtnAccount = "Iniciar Sesion";
+    }
+  },
+  beforeUpdate() {
+    if (this.isAuth) {
+      this.textBtnAccount = this.titleCase(localStorage.getItem("name"));
+      this.userId = localStorage.getItem("userId");
     } else {
       this.textBtnAccount = "Iniciar Sesion";
     }
@@ -291,9 +312,9 @@ header {
 .logo {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
   text-decoration: none;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
 }
 .logo svg {
   fill: var(--bc-book);

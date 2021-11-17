@@ -4,10 +4,15 @@
 
 <script>
 export default {
-
-}
+  name: "Login",
+  data() {
+    return {
+      // !REALIZAR LA VISTA DE NO ENCONTRARO 404
+    };
+  },
+  methods: {},
+};
 </script>
 
-<style>
-
+<style scoped>
 </style>

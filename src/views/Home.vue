@@ -141,9 +141,9 @@ export default {
     Carousel,
     Slide,
   },
-  props:["isAdmin"],
   data() {
     return {
+      isAdmin:false,
       books: [],
       filterBooks: [],
       dataInPage: [],
@@ -237,6 +237,7 @@ export default {
     },
   },
   mounted() {
+    this.isAdmin=localStorage.getItem("isAdmin");
     this.getData();
   },
 };

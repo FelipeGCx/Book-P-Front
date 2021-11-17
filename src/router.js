@@ -9,6 +9,18 @@ const routes = [
 		props: true
 	},
 	{
+		path: '/login',
+		name: 'Login',
+		component: () => import('@/views/Login.vue'),
+		meta: { title: 'Iniciar Sesión' }
+	},
+	{
+		path: '/signup',
+		name: 'Signup',
+		component: () => import('@/views/Signup.vue'),
+		meta: { title: 'Registrarse' }
+	},
+	{
 		path: '/book/create',
 		name: 'CreateBook',
 		component: () => import('@/views/CreateBook.vue'),
@@ -42,6 +54,18 @@ const routes = [
 		name: 'User',
 		component: () => import('@/views/User.vue'),
 		meta: { title: 'Datos De Usuario' }
+	},
+	{
+		path: '/user/:id/settings',
+		name: 'Settings',
+		component: () => import('@/views/UserSettings.vue'),
+		meta: { title: 'Configuración De Usuario' }
+	},
+	{
+		path: '/user/:id/loans',
+		name: 'Loans',
+		component: () => import('@/views/LendingBooks.vue'),
+		meta: { title: 'Mis Prestamos' }
 	},
 	{
 	  path: '/:catchAll(.*)',

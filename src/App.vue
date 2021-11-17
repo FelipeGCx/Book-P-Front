@@ -1,13 +1,14 @@
 <template>
-  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="isAuth = true; isAdmin=true"/>
+  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="Login" @logoutClicked="Logout"/>
   <main>
-    <router-view :isAdmin="isAdmin"/>
+    <router-view/>
   </main>
   <Footer />
 </template>
 <script>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import "@/users.js";
 
 export default {
   name: "App",
@@ -20,9 +21,25 @@ export default {
       isAuth: false,
       isAdmin: false,
       block: false,
+      user:[],
+      id: 3,
     };
   },
-  methods: {},
+  methods: {
+    Login(){
+      this.isAuth = true; 
+      this.isAdmin = true;
+      this.user = usersData;
+      this.user = this.user.find((user) => user.id == this.id);
+      let name = `${this.user.firstname} ${this.user.lastname}`;
+      localStorage.setItem("name",name);
+      localStorage.setItem("userId",this.id);
+      localStorage.setItem("isAdmin",this.isAdmin);
+    },
+    Logout(){
+      
+    },
+  },
   mounted() {},
 }
 </script>
