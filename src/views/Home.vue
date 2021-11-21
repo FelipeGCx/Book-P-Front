@@ -57,6 +57,7 @@
         v-for="(book, idx) in dataInPage"
         :key="idx"
         @click="open(book.id, book.title)"
+        @blur="clean"
       >
         <div class="information">
           <span class="main-span">{{ book.title }}</span>
@@ -152,7 +153,7 @@ export default {
       totalPages: 0,
       onePage: true,
       hover: false,
-      focus: false,
+      focus: true,
       clickControl: false,
       idFocus: null,
       isVoid: false,
@@ -234,6 +235,10 @@ export default {
       } else {
         this.clickControl = false;
       }
+    },
+    clean(){
+      this.idFocus=0;
+      this.focus = false;
     },
   },
   mounted() {

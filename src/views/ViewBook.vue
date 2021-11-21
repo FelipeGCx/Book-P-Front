@@ -16,7 +16,7 @@
           <span><i>Genero:</i> {{ book.category }} </span>
           <span><i>ISBN:</i> {{ book.isbn }} </span>
           <span><i>Tiempo de Prestamo:</i> 20 días </span>
-          <a href="https://ezproxy.biblored.gov.co:2152/a/28075/">Ir a contenido real</a>
+          <!-- <a href="https://ezproxy.biblored.gov.co:2152/a/28075/">Ir a contenido real</a> -->
         </div>
         <div class="disclaimer">
           <i>© Todos los Derechos Reservados</i>
@@ -31,7 +31,8 @@
 </template>
  
  <script>
- import "@/data.js";
+import "@/data.js";
+import moment from "moment";
 export default {
   name: "CreateBook",
   data() {
@@ -48,7 +49,7 @@ export default {
         category: null,
         editorial: null,
         status: null,
-        isbn:null,
+        isbn: null,
         poster: require("@/assets/images/NotFound.svg"),
       },
     };
@@ -72,11 +73,10 @@ export default {
       this.$router.push({ name: "Home" });
       window.scrollTo(0, 0);
     },
-    makeLoan(){
-      // let dateStart = new Date().toLocaleString("es-CO");
-      // let dateEnd = new Date();
-      // dateEnd.setDate(dateEnd.getDate() + 20);
-      // dateEnd = dateEnd.toLocaleString("es-CO");
+    makeLoan() {
+      moment.locale("es-CO");
+      // let dateStart = moment().format("L");
+      // let dateFinish = moment().add(20, "days").calendar();
     },
   },
   mounted() {

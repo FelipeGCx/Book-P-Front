@@ -46,6 +46,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 :root {
+  font: 11pt "Poppins","Montserrat Medium";
   --header-background: #16223f;
   --bg: #f7f7f7;
   --bc-book: #eb2d6d;

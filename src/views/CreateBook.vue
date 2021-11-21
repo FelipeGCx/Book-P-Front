@@ -56,7 +56,15 @@
           </div>
           <div class="containter-input">
             <label for="isbn">ISBN:</label>
-            <input type="text" id="isbn" :value="book.isbn" required />
+            <input
+              type="number"
+              id="isbn"
+              minlength="10"
+              maxlength="13"
+              step="1"
+              :value="book.isbn"
+              required
+            />
           </div>
         </div>
 
@@ -356,14 +364,15 @@ input[type="file"] {
   align-items: center;
   white-space: nowrap;
 }
-#year {
+#year,#isbn {
   padding: 0 0 0 0.5rem;
   background-image: url(../icons/arrows_scroll.svg);
   background-repeat: no-repeat;
   background-position-x: right;
   background-position-y: center;
 }
-#year::-webkit-inner-spin-button {
+#year::-webkit-inner-spin-button, #isbn::-webkit-inner-spin-button {
+  /* visibility: hidden; */
   opacity: 0;
 }
 </style>
