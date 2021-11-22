@@ -51,6 +51,8 @@ import TableLending from "@/components/TableLending.vue";
 import "@/loans.js";
 import "@/data.js";
 import "@/users.js";
+import moment from "moment";
+
 export default {
   name: "InLending",
   components: {
@@ -91,11 +93,14 @@ export default {
           user: `${this.users.find(user => user.id == element.idUser).firstname} ${this.users.find(user => user.id == element.idUser).lastname}`,
           idBook: element.idBook,
           title: this.books.find(book => book.id == element.idBook).title.toString(),
+          status: this.books.find(book => book.id == element.idBook).status, 
           dateStart: element.dateStart,
           dateFinish: element.dateFinish,
         };
         this.loansF.push(loan);
       }
+      // moment.locale("es-CO");
+      // let dateNow = moment().format("L");
       this.pages = this.totalPages();
       if (this.actualPage > this.pages) {
         this.$router.push({

@@ -6,6 +6,7 @@
       <th class="m1">Usuario</th>
       <th>BookID</th>
       <th class="m1">Titulo</th>
+      <th >Status</th>
       <th class="m2">Fecha Inicio</th>
       <th>Fecha Fin</th>
     </tr>
@@ -15,6 +16,7 @@
       <td class="m1 | cur" @click="openUser(loan.idUser)">{{ loan.user }}</td>
       <td @click="openBook(loan.idBook)" class="subline">{{ loan.idBook }}</td>
       <td class="m1 | cur" @click="openBook(loan.idBook)">{{ loan.title }}</td>
+      <td>{{ (loan.status == 1) ? 'En Stock' : (loan.status == 2) ? 'En Proceso': 'En Prestamo'}}</td>
       <td class="m2">{{ loan.dateStart }}</td>
       <td>{{ loan.dateFinish }}</td>
     </tr>

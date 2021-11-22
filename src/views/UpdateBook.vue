@@ -156,16 +156,14 @@ export default {
         poster: require("@/assets/images/NotFound.svg"),
       },
       categories: ["Selecione un Genero"],
-      status: {
-        false: {
-          value: false,
-          name: "En Stock",
-        },
-        true: {
-          value: true,
-          name: "En Prestamo",
-        },
-      },
+      status: [
+        {value:1,
+        name:"En Stock",},
+        {value:2,
+        name:"En Proceso",},
+        {value:3,
+        name:"En Prestamo",},
+      ],
       modalUpdate: {
         visible: false,
         message: "¿Actualizar Registro?",

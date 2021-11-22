@@ -18,7 +18,7 @@
       <td class="m2">{{ book.year }}</td>
       <td class="m1">{{ book.editorial }}</td>
       <td class="m1">{{ book.category }}</td>
-      <td>{{ (book.status) ? 'En Prestamo' : 'En Stock' }}</td>
+      <td>{{ (book.status == 1) ? 'En Stock' : (book.status == 2) ? 'En Proceso': 'En Prestamo'}}</td>
       <td class="m2">
         <a :href="book.poster" target="_blank"
           ><svg
