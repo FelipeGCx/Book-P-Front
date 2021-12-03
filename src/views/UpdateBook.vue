@@ -130,7 +130,7 @@
 </template>
  
  <script>
-import { app } from "../utils/fb";
+import { app } from "../utils/firebaseConfig";
 import Confirmation from "@/components/Confirmation.vue";
 import "@/data.js";
 export default {

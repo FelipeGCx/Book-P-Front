@@ -1,7 +1,13 @@
 <template>
-  <Header :isAuth="isAuth" :block="block" :isAdmin="isAdmin" @momentaneo="Login" @logoutClicked="Logout"/>
+  <Header
+    :isAuth="isAuth"
+    :block="block"
+    :isAdmin="isAdmin"
+    @momentaneo="Login"
+    @logoutClicked="Logout"
+  />
   <main>
-    <router-view/>
+    <router-view />
   </main>
   <Footer />
 </template>
@@ -21,32 +27,30 @@ export default {
       isAuth: false,
       isAdmin: false,
       block: false,
-      user:[],
+      user: [],
       id: 3,
     };
   },
   methods: {
-    Login(){
-      this.isAuth = true; 
+    Login() {
+      this.isAuth = true;
       this.isAdmin = true;
       this.user = usersData;
       this.user = this.user.find((user) => user.id == this.id);
       let name = `${this.user.firstname} ${this.user.lastname}`;
-      localStorage.setItem("name",name);
-      localStorage.setItem("userId",this.id);
-      localStorage.setItem("isAdmin",this.isAdmin);
+      localStorage.setItem("name", name);
+      localStorage.setItem("userId", this.id);
+      localStorage.setItem("isAdmin", this.isAdmin);
     },
-    Logout(){
-      
-    },
+    Logout() {},
   },
   mounted() {},
-}
+};
 </script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 :root {
-  font: 11pt "Poppins","Montserrat Medium";
+  font: 11pt "Poppins", "Montserrat Medium";
   --header-background: #16223f;
   --bg: #f7f7f7;
   --bc-book: #eb2d6d;
@@ -57,18 +61,19 @@ export default {
   --bg-hover-dropdown: #0066cd;
   --in-hover-dropdown: #1eaca0;
   --color-clear: white;
-  --color-dark:#16223f;
+  --color-dark: #16223f;
   --radius: 0.5rem;
   --selector: var(--bc-book);
   --border-input: var(--header-background);
   --scrollbar-color: var(--bc-book);
   --sub-color: #16223fc9;
   --color-nav: #22294c;
-  --bg-drop:var(--header-background);
-  --drop-hover:#22294c;
-  --bg-banner:#8a2be2;
+  --bg-drop: var(--header-background);
+  --drop-hover: #22294c;
+  --bg-banner: #8a2be2;
   /* --bg-book-anim:#e91e6300; */
-  --bg-book-anim:#eb2d6d;
+  --bg-book-anim: #eb2d6d;
+  --bg-tooltip: var(--bg-banner);
 }
 * {
   font: 11pt "Poppins";
@@ -188,6 +193,34 @@ h2 {
 .sub-button:hover {
   box-shadow: 0 0.2rem 0.3rem 0.1rem var(--bg-hover-main-button);
   z-index: 3;
+}
+.tooltip {
+  position: relative;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+.tooltiptext {
+  visibility: hidden;
+  background-color: var(--bg-tooltip);
+  color: var(--color-clear);
+  text-align: center;
+  border-radius: var(--radius);
+  padding: 0.4rem 0.7rem;
+  position: absolute;
+  z-index: 1;
+  left: -130%;
+  top: 10%;
+  white-space: nowrap;
+}
+.tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 30%;
+  right: -9%;
+  border-width: 0.35rem;
+  border-style: solid;
+  border-color: #0000  #0000 #0000 var(--bg-tooltip);
 }
 @keyframes iconmove {
   0% {

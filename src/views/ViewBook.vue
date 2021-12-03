@@ -25,7 +25,7 @@
     </div>
     <div class="second-container">
       <p>{{ book.resume }}</p>
-      <button @click="makeLoan" class="main-button">Prestamo</button>
+      <button @click="makeLoan" :class="book.status != 1 ? 'disabled' : '' " :disabled="book.status != 1" class="main-button | tooltip"><span class="tooltiptext" v-if="book.status != 1">No Disponible</span>Prestamo</button>
     </div>
   </div>
 </template>
@@ -74,6 +74,10 @@ export default {
       window.scrollTo(0, 0);
     },
     makeLoan() {
+      console.log('llega');
+      if (book.status != 1) {
+        
+      }
       moment.locale("es-CO");
       // let dateStart = moment().format("L");
       // let dateFinish = moment().add(20, "days").calendar();
@@ -135,7 +139,7 @@ h1 {
   display: flex;
   gap: 1rem;
   align-items: center;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   width: 100%;
 }
 form {
@@ -248,5 +252,12 @@ input[type="file"] {
   color: var(--bg-main-button);
   transition: all 0.3s ease;
   border: 0.1rem solid var(--bg-main-button);
+}
+.main-button:disabled{
+  filter: grayscale(1);
+  cursor: default;
+}
+.main-button:hover:disabled{
+  box-shadow: 0 0.2rem 0.3rem 0.1rem transparent;
 }
 </style>

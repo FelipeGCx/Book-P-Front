@@ -68,6 +68,12 @@ const routes = [
 		meta: { title: 'Mis Prestamos' }
 	},
 	{
+		path: '/tester',
+		name: 'test',
+		component: () => import('@/views/PrintLoan.vue'),
+		meta: {title: 'Recibo'}
+	},
+	{
 	  path: '/:catchAll(.*)',
 	  name: 'NotFound',
 		component: () => import('@/views/NotFound.vue'),

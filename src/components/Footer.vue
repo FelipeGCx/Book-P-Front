@@ -1,6 +1,9 @@
 <template>
   <footer>
-    <span>Grupo P44 | Equipo 2</span>
+    <div class="info">
+      <span>Grupo P44 | Equipo 2</span>
+      <span>dwgrupo2c4@gmail.com</span>
+    </div>
     <div class="icons">
       <img class="unal" :src="unal" alt="universidad nacional de colombia" />
       <line></line>
@@ -23,22 +26,24 @@ export default {
 
 <style scoped>
 @media only screen and (min-width: 750px) and (max-width: 2000px) {
-  footer{
+  footer {
+    height: 10rem;
     flex-direction: row;
-  justify-content: space-between;
-
+    justify-content: space-between;
+  }
+  .info {
+    align-items: flex-start !important;
   }
 }
 @media only screen and (min-width: 10px) and (max-width: 750px) {
-  footer{
+  footer {
+    height: 12rem;
     flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-
+    justify-content: center;
+    gap: 1rem;
   }
 }
 footer {
-  height: 10rem;
   width: 100vw;
   background-color: var(--header-background);
   display: flex;
@@ -48,7 +53,11 @@ footer {
   padding: 0 11vw;
   transform: translateY(3.1vw);
 }
-.icons {
+.info {
+  flex-direction: column;
+}
+.icons,
+.info {
   display: flex;
   align-items: center;
   gap: 1rem;

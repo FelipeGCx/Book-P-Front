@@ -111,7 +111,7 @@
  
  <script>
 import Confirmation from "@/components/Confirmation.vue";
-import { app } from "../utils/fb";
+import { app } from "../utils/firebaseConfig";
 import "@/data.js";
 export default {
   name: "CreateBook",
