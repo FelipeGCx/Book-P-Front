@@ -301,6 +301,7 @@ export default {
           this.modalUpdate.finish = true;
           setTimeout(() => {
             this.modalUpdate.visible = false;
+            this.$apollo.queries.InventoriesDetail.refetch();
             this.$router.push({ name: "Home" });
           }, 1000);
         })
@@ -327,7 +328,7 @@ export default {
       this.modalUpdate.animation = true;
       await this.saveImage();
       const book = {
-        title: this.book.title,
+        title: this.titleCase(this.book.title),
         author: this.book.author,
         year: this.book.year,
         category: this.book.category,
@@ -357,6 +358,7 @@ export default {
           this.modalDelete.finish = true;
           setTimeout(() => {
             this.modalDelete.visible = false;
+            this.$apollo.queries.InventoriesDetail.refetch();
             this.$router.push({ name: "Home" });
           }, 1000);
         })
@@ -366,6 +368,13 @@ export default {
             this.modalDelete.visible = false;
           }, 2000);
         });
+    },
+    titleCase(string) {
+      var sentence = string.toLowerCase().split(" ");
+      for (var i = 0; i < sentence.length; i++) {
+        sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+      }
+      return sentence.join(" ");
     },
   },
   mounted() {

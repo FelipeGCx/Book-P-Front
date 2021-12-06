@@ -220,8 +220,8 @@ export default {
       this.$router.push({ name: "Home" });
       window.scrollTo(0, 0);
     },
-    saveProcess(){
-        this.modal.visible = true;
+    saveProcess() {
+      this.modal.visible = true;
     },
     async saveBook() {
       if (this.book.category == 0 && this.newCategory == null) {
@@ -232,11 +232,11 @@ export default {
           this.book.category = this.newCategory;
         }
         this.modal.animation = true;
-        if (this.file.name != null){
+        if (this.file.name != null) {
           await this.saveImage();
         }
         const book = {
-          title: this.book.title,
+          title: this.titleCase(this.book.title),
           author: this.book.author,
           year: this.book.year,
           category: this.book.category,
@@ -277,6 +277,7 @@ export default {
           this.modal.finish = true;
           setTimeout(() => {
             this.modal.visible = false;
+            this.$apollo.queries.InventoriesDetail.refetch();
             this.$router.push({ name: "Home" });
           }, 1000);
         })
@@ -301,6 +302,13 @@ export default {
         : "¿selecion de genero?";
       this.book.category = 0;
       this.newCategory = null;
+    },
+    titleCase(string) {
+      var sentence = string.toLowerCase().split(" ");
+      for (var i = 0; i < sentence.length; i++) {
+        sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+      }
+      return sentence.join(" ");
     },
   },
   mounted() {

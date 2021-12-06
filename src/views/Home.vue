@@ -149,7 +149,7 @@ export default {
       isAdmin: false,
       filterBooks: [],
       dataInPage: [],
-      elementsPerPage: 10,
+      elementsPerPage: 25,
       actualPage: 1,
       totalPages: 0,
       onePage: true,
@@ -158,7 +158,7 @@ export default {
       clickControl: false,
       idFocus: null,
       isVoid: false,
-      border:null,
+      border: null,
       filter: "",
       carouselSlides: ["S01", "S02"],
       InventoriesDetail: {
@@ -192,12 +192,16 @@ export default {
       update: (data) => data.inventoriesDetail,
       result() {
         this.getData();
-      }
+      },
+      error() {
+        this.$router.push({ name: "Home" });
+      },
     },
   },
   methods: {
     getData() {
-      this.books = this.InventoriesDetail;
+      this.books = JSON.parse(JSON.stringify(this.InventoriesDetail));
+      this.books = this.books.reverse();
       this.filterBook();
     },
     filterBook() {
@@ -401,6 +405,7 @@ span {
 }
 .main-span {
   font-size: 1.1em;
+  text-align: initial;
 }
 .poster {
   height: 26em;

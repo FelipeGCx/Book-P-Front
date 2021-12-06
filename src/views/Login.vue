@@ -114,15 +114,15 @@ export default {
             }
           `,
           variables: {
-            credentials: user,
+            credentials: this.user,
           },
         })
         .then((result) => {
           console.log(result);
-          localStorage.setItem("tokenRefresh", result.username);
+          localStorage.setItem("tokenRefresh", result.refresh);
+          localStorage.setItem("tokenAccess", result.access);
           this.modal.animation = false;
           this.modal.visible = false;
-          //   this.$router.push({ name: "Home" });
         })
         .catch((error) => {
           this.modal.error = true;
