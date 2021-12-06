@@ -61,7 +61,8 @@
 <script>
 import Confirmation from "@/components/Confirmation.vue";
 import Table from "@/components/Table.vue";
-import "@/data.js";
+import gql from "graphql-tag";
+
 export default {
   name: "Inventory",
   components: {
@@ -86,13 +87,33 @@ export default {
       },
     };
   },
+  apollo: {
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            id
+            title
+            author
+            year
+            category
+            editorial
+            poster
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+      result() {
+        this.getData();
+      },
+    },
+  },
   methods: {
     totalPages() {
       return Math.ceil(this.books.length / this.elementsPerPage);
     },
     async getData() {
-      // !HACER LA PETICIÓN DE LOS LIBROS
-      this.books = registers;
+      this.books = this.InventoriesDetail;
       this.pages = Math.ceil(this.books.length / this.elementsPerPage);
       if (this.actualPage > this.pages) {
         this.$router.push({
@@ -114,11 +135,10 @@ export default {
     isActive(numPage) {
       return numPage == this.actualPage ? "active" : "";
     },
-    deleteBook(){},
+    deleteBook() {},
   },
   mounted() {
     this.actualPage = parseInt(this.$route.params.id);
-    this.getData();
   },
   beforeUpdate() {
     this.actualPage = parseInt(this.$route.params.id);
@@ -184,7 +204,7 @@ svg {
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
 }
-a{
+a {
   text-decoration: none;
 }
 </style>

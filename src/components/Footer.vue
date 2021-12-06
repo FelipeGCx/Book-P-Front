@@ -41,6 +41,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     gap: 1rem;
+    padding: 0 7vw !important;
   }
 }
 footer {

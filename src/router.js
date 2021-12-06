@@ -35,7 +35,7 @@ const routes = [
 		path: '/book/:id/update',
 		name: 'UpdateBook',
 		component: () => import('@/views/UpdateBook.vue'),
-		meta: { title: 'Editar Resgitro' }
+		meta: { title: 'Editar Registro' }
 	},
 	{
 		path: '/books/inventory/page/:id',

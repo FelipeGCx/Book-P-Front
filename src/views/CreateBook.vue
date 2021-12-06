@@ -1,16 +1,16 @@
  <template>
   <div class="component">
     <h1>Nuevo Registro</h1>
-    <form @submit.prevent="showModal">
+    <form @submit.prevent="saveProcess">
       <div class="first-container">
         <div class="inputs">
           <div class="containter-input">
             <label for="title">Titulo:</label>
-            <input type="text" id="title" required />
+            <input type="text" id="title" v-model="book.title" required />
           </div>
           <div class="containter-input">
             <label for="author">Autor:</label>
-            <input type="text" id="author" required />
+            <input type="text" id="author" v-model="book.author" required />
           </div>
           <div class="containter-input">
             <label for="year">Año:</label>
@@ -22,17 +22,32 @@
               minlength="4"
               maxlength="4"
               step="1"
-              :value="book.year"
+              v-model="book.year"
               required
             />
           </div>
           <div class="containter-input">
             <label for="editorial">Editorial:</label>
-            <input type="text" id="editorial" required />
+            <input
+              type="text"
+              id="editorial"
+              v-model="book.editorial"
+              required
+            />
           </div>
           <div class="containter-input">
-            <label for="category">Genero:</label>
-            <select id="category" required>
+            <label for="category" class="category"
+              ><p>Genero:<i v-show="categoryValid"> *obligatorio</i></p>
+              <a @click="showCategoryInpunt">{{ textNonCategory }}</a></label
+            >
+            <select
+              id="category"
+              :style="{ border: borderCategory }"
+              v-model="book.category"
+              v-show="!noncategory"
+              :required="!noncategory"
+            >
+              <option value="0" disabled selected>Selecione un Genero</option>
               <option
                 v-for="(item, index) in categories"
                 :key="index"
@@ -41,10 +56,17 @@
                 {{ item }}
               </option>
             </select>
+            <input
+              type="text"
+              v-show="noncategory"
+              :required="noncategory"
+              v-model="newCategory"
+              placeholder="Escribe el genero"
+            />
           </div>
           <div class="containter-input">
             <label for="status">Estatus:</label>
-            <select id="status" required>
+            <select id="status" v-model="book.status" required>
               <option
                 v-for="(item, index) in status"
                 :key="index"
@@ -62,7 +84,7 @@
               minlength="10"
               maxlength="13"
               step="1"
-              :value="book.isbn"
+              v-model="book.isbn"
               required
             />
           </div>
@@ -87,7 +109,7 @@
       <div class="second-container">
         <div class="containter-input">
           <label for="resume">Sinopsis:</label>
-          <textarea type="text" id="resume" :value="book.resume" required />
+          <textarea type="text" id="resume" v-model="book.resume" required />
         </div>
         <div class="buttons">
           <button @click="cancel" class="sub-button">Cancelar</button>
@@ -112,7 +134,8 @@
  <script>
 import Confirmation from "@/components/Confirmation.vue";
 import { app } from "../utils/firebaseConfig";
-import "@/data.js";
+import gql from "graphql-tag";
+
 export default {
   name: "CreateBook",
   components: {
@@ -129,6 +152,11 @@ export default {
         finish: false,
         error: false,
       },
+      noncategory: false,
+      newCategory: null,
+      categoryValid: false,
+      borderCategory: ".1rem solid var(--border-input)",
+      textNonCategory: "¿el genero no esta?",
       file: {
         name: null,
       },
@@ -137,23 +165,36 @@ export default {
         title: null,
         author: null,
         year: null,
-        category: null,
+        category: 0,
         editorial: null,
-        status: null,
+        status: 1,
         isbn: null,
-        poster: require("@/assets/images/NotFound.svg"),
+        poster:
+          "https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d",
         resume: null,
       },
-      categories: ["Selecione un Genero"],
+      categories: [],
       status: [
-        {value:1,
-        name:"En Stock",},
-        {value:2,
-        name:"En Proceso",},
-        {value:3,
-        name:"En Prestamo",},
+        { value: 1, name: "En Stock" },
+        { value: 2, name: "En Proceso" },
+        { value: 3, name: "En Prestamo" },
       ],
     };
+  },
+  apollo: {
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            category
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+      result() {
+        this.loadCategories();
+      },
+    },
   },
   methods: {
     fileSelected(e) {
@@ -179,32 +220,91 @@ export default {
       this.$router.push({ name: "Home" });
       window.scrollTo(0, 0);
     },
-    async saveBook() {
-      this.modal.animation = true;
-      setTimeout(() => {
-        this.modal.animation = false;
-        this.modal.finish = true;
-      }, 5000);
-      setTimeout(() => {
-        this.modal.visible = false;
-      }, 7000);
-      // await this.saveImage();
+    saveProcess(){
+        this.modal.visible = true;
     },
-    loadCategories() {
-      for (const key in registers) {
-        const element = registers[key].category;
-        if (!this.categories.includes(element)) {
-          this.categories.push(element);
+    async saveBook() {
+      if (this.book.category == 0 && this.newCategory == null) {
+        this.borderCategory = ".1rem solid tomato";
+        this.categoryValid = true;
+      } else {
+        if (this.book.category == 0) {
+          this.book.category = this.newCategory;
         }
+        this.modal.animation = true;
+        if (this.file.name != null){
+          await this.saveImage();
+        }
+        const book = {
+          title: this.book.title,
+          author: this.book.author,
+          year: this.book.year,
+          category: this.book.category,
+          editorial: this.book.editorial,
+          status: this.book.status,
+          isbn: this.book.isbn.toString(),
+          poster: this.book.poster,
+          resume: this.book.resume,
+        };
+        this.saveInfoBooks(book);
       }
     },
-    showModal() {
-      this.modal.visible = true;
+    async saveInfoBooks(book) {
+      await this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation NewInventory($inventoryInput: InventoryInput!) {
+              newInventory(inventoryInput: $inventoryInput) {
+                id
+                title
+                author
+                year
+                category
+                editorial
+                status
+                isbn
+                poster
+                resume
+              }
+            }
+          `,
+          variables: {
+            inventoryInput: book,
+          },
+        })
+        .then((result) => {
+          this.modal.animation = false;
+          this.modal.finish = true;
+          setTimeout(() => {
+            this.modal.visible = false;
+            this.$router.push({ name: "Home" });
+          }, 1000);
+        })
+        .catch((error) => {
+          this.modal.error = true;
+          setTimeout(() => {
+            this.modal.visible = false;
+          }, 2000);
+        });
+    },
+    loadCategories() {
+      this.InventoriesDetail.forEach((element) => {
+        if (!this.categories.includes(element.category)) {
+          this.categories.push(element.category);
+        }
+      });
+    },
+    showCategoryInpunt() {
+      this.noncategory = !this.noncategory;
+      this.textNonCategory = !this.noncategory
+        ? "¿el genero no esta?"
+        : "¿selecion de genero?";
+      this.book.category = 0;
+      this.newCategory = null;
     },
   },
   mounted() {
     this.updateBorder();
-    this.loadCategories();
   },
 };
 </script>
@@ -267,6 +367,11 @@ form {
   gap: 3rem;
   /* padding-bottom: 3rem; */
 }
+.category {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
 label {
   align-self: flex-start;
 }
@@ -317,6 +422,9 @@ textarea::-webkit-scrollbar-thumb {
   border: 0.1rem solid transparent;
   border-radius: 1rem;
 }
+a {
+  text-decoration: underline;
+}
 .containter-input {
   display: flex;
   flex-direction: column;
@@ -348,6 +456,9 @@ textarea::-webkit-scrollbar-thumb {
 input[type="file"] {
   display: none;
 }
+i {
+  color: tomato;
+}
 .selector {
   padding: 0.2rem 1rem;
   background-color: var(--selector);
@@ -362,14 +473,16 @@ input[type="file"] {
   align-items: center;
   white-space: nowrap;
 }
-#year,#isbn {
+#year,
+#isbn {
   padding: 0 0 0 0.5rem;
   background-image: url(../icons/arrows_scroll.svg);
   background-repeat: no-repeat;
   background-position-x: right;
   background-position-y: center;
 }
-#year::-webkit-inner-spin-button, #isbn::-webkit-inner-spin-button {
+#year::-webkit-inner-spin-button,
+#isbn::-webkit-inner-spin-button {
   /* visibility: hidden; */
   opacity: 0;
 }

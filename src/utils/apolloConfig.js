@@ -4,7 +4,7 @@ import { clientApolloProvider, createApolloProvider } from '@vue/apollo-option'
 import { setContext } from 'apollo-link-context'
 
 const httpLink = createHttpLink({
-    uri:''//^ url del componente en heroku
+    uri:'https://book-apigateway.herokuapp.com/'
 })
 
 const authLink = setContext((_, { headers }) => {

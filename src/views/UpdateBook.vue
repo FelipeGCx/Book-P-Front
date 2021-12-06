@@ -2,18 +2,18 @@
   <div class="component">
     <h1>
       Editar Registro
-      <button class="little-button">Eliminar</button>
+      <button class="little-button" @click="deleteProcess">Eliminar</button>
     </h1>
-    <form @submit.prevent="saveBook">
+    <form @submit.prevent="updateProcess">
       <div class="first-container">
         <div class="inputs">
           <div class="containter-input">
             <label for="title">Titulo:</label>
-            <input type="text" id="title" :value="book.title" required />
+            <input type="text" id="title" v-model="book.title" required />
           </div>
           <div class="containter-input">
             <label for="author">Autor:</label>
-            <input type="text" id="author" :value="book.author" required />
+            <input type="text" id="author" v-model="book.author" required />
           </div>
           <div class="containter-input">
             <label for="year">Año:</label>
@@ -25,7 +25,7 @@
               minlength="4"
               maxlength="4"
               step="1"
-              :value="book.year"
+              v-model="book.year"
               required
             />
           </div>
@@ -34,13 +34,13 @@
             <input
               type="text"
               id="editorial"
-              :value="book.editorial"
+              v-model="book.editorial"
               required
             />
           </div>
           <div class="containter-input">
             <label for="category">Genero:</label>
-            <select id="category" required>
+            <select id="category" required v-model="book.category">
               <option
                 v-for="(item, index) in categories"
                 :key="index"
@@ -53,7 +53,7 @@
           </div>
           <div class="containter-input">
             <label for="status">Estatus:</label>
-            <select id="status" required>
+            <select id="status" required v-model="book.status">
               <option
                 v-for="(item, index) in status"
                 :key="index"
@@ -72,7 +72,7 @@
               minlength="10"
               maxlength="13"
               step="1"
-              :value="book.isbn"
+              v-model="book.isbn"
               required
             />
           </div>
@@ -89,14 +89,20 @@
             <span class="name-file">{{ this.file.name }}</span>
           </div>
           <label for="select-image">
-            <img :src="book.poster" :style="{ border: border }" :alt="book.title"/>
+            <img
+              :src="book.poster"
+              :style="{ border: border }"
+              :alt="book.title"
+              onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d'"
+              @error="this.border = '.1rem solid var(--border-input)'"
+            />
           </label>
         </div>
       </div>
       <div class="second-container">
         <div class="containter-input">
           <label for="resume">Sinopsis:</label>
-          <textarea type="text" id="resume" :value="book.resume" required />
+          <textarea type="text" id="resume" v-model="book.resume" required />
         </div>
         <div class="buttons">
           <button @click="cancel" class="sub-button">Cancelar</button>
@@ -132,15 +138,16 @@
  <script>
 import { app } from "../utils/firebaseConfig";
 import Confirmation from "@/components/Confirmation.vue";
-import "@/data.js";
+import gql from "graphql-tag";
+
 export default {
   name: "UpdateBook",
-  components:{
+  components: {
     Confirmation,
   },
   data() {
     return {
-      id:null,
+      id: null,
       file: {
         name: null,
       },
@@ -152,17 +159,16 @@ export default {
         category: null,
         editorial: null,
         status: null,
-        isbn:null,
-        poster: require("@/assets/images/NotFound.svg"),
+        isbn: null,
+        poster:
+          "https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d",
+        resume: null,
       },
-      categories: ["Selecione un Genero"],
+      categories: [],
       status: [
-        {value:1,
-        name:"En Stock",},
-        {value:2,
-        name:"En Proceso",},
-        {value:3,
-        name:"En Prestamo",},
+        { value: 1, name: "En Stock" },
+        { value: 2, name: "En Proceso" },
+        { value: 3, name: "En Prestamo" },
       ],
       modalUpdate: {
         visible: false,
@@ -184,10 +190,51 @@ export default {
       },
     };
   },
+  apollo: {
+    InventoryDetailById: {
+      query: gql`
+        query InventoryDetailById($inventoryId: String!) {
+          inventoryDetailById(inventoryId: $inventoryId) {
+            id
+            title
+            author
+            year
+            category
+            editorial
+            status
+            isbn
+            poster
+            resume
+          }
+        }
+      `,
+      variables() {
+        return {
+          inventoryId: this.$route.params.id,
+        };
+      },
+      update: (data) => data.inventoryDetailById,
+      result() {
+        this.getData();
+      },
+    },
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            category
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+      result() {
+        this.loadCategories();
+      },
+    },
+  },
   methods: {
     getData() {
-      //   !HACER PETICIÓN PARA OBTENER LOS ATRIBUTOS DEL LIBRO
-      this.book = registers[this.id-1];
+      this.book = JSON.parse(JSON.stringify(this.InventoryDetailById));
       this.updateBorder();
     },
     fileSelected(e) {
@@ -195,42 +242,134 @@ export default {
       this.updateBorder();
       const objectURL = URL.createObjectURL(this.file);
       this.book.poster = objectURL;
-      // this.saveImage();
+    },
+    updateBorder() {
+      if (this.file.name == null) {
+        this.border = ".1rem solid var(--border-input)";
+      } else {
+        this.border = ".1rem solid transparent";
+      }
+    },
+    cancel() {
+      let history = window.history.back();
+      if (history == "/") {
+        this.$router.push({ name: "Home" });
+      } else {
+        this.$router.push({ name: "Inventory" });
+      }
+      window.scrollTo(0, 0);
+    },
+    loadCategories() {
+      this.InventoriesDetail.forEach((element) => {
+        if (!this.categories.includes(element.category)) {
+          this.categories.push(element.category);
+        }
+      });
+    },
+    async saveInfoBooks(book) {
+      await this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation UpdateInventory(
+              $inventoryId: String!
+              $inventoryUpdateInput: InventoryUpdateInput
+            ) {
+              updateInventory(
+                inventoryId: $inventoryId
+                inventoryUpdateInput: $inventoryUpdateInput
+              ) {
+                id
+                title
+                author
+                year
+                category
+                editorial
+                status
+                isbn
+                poster
+                resume
+              }
+            }
+          `,
+          variables: {
+            inventoryId: this.id,
+            inventoryUpdateInput: book,
+          },
+        })
+        .then((result) => {
+          this.modalUpdate.animation = false;
+          this.modalUpdate.finish = true;
+          setTimeout(() => {
+            this.modalUpdate.visible = false;
+            this.$router.push({ name: "Home" });
+          }, 1000);
+        })
+        .catch((error) => {
+          this.modalUpdate.error = true;
+          setTimeout(() => {
+            this.modalUpdate.visible = false;
+          }, 2000);
+        });
     },
     async saveImage() {
       const storageRef = app.storage().ref();
       const filePath = storageRef.child(this.file.name);
       await filePath.put(this.file);
-      console.log("archivo cargado");
       this.book.poster = await filePath.getDownloadURL();
     },
-    updateBorder() {
-      this.border = (this.book.status == null) ? ".1rem solid var(--border-input)" : ".1rem solid transparent";
+    updateProcess() {
+      this.modalUpdate.visible = true;
     },
-    cancel() {
-      let history = window.history.back();
-      if(history == "/"){
-        this.$router.push({ name: "Home" });
-      }else{
-        this.$router.push({ name: "Inventory" });
-      }
-      window.scrollTo(0, 0);
+    deleteProcess() {
+      this.modalDelete.visible = true;
     },
-    loadCategories(){
-      for (const key in registers) {
-          const element = registers[key].category;
-          if(!this.categories.includes(element)){
-            this.categories.push(element);
-          }
-      }
+    async updateBook() {
+      this.modalUpdate.animation = true;
+      await this.saveImage();
+      const book = {
+        title: this.book.title,
+        author: this.book.author,
+        year: this.book.year,
+        category: this.book.category,
+        editorial: this.book.editorial,
+        status: this.book.status,
+        isbn: this.book.isbn.toString(),
+        poster: this.book.poster,
+        resume: this.book.resume,
+      };
+      this.saveInfoBooks(book);
     },
-    updateBook(){},
-    deleteBook(){},
+    async deleteBook() {
+      this.modalDelete.animation = true;
+      await this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation DelInventory($inventoryId: String!) {
+              delInventory(inventoryId: $inventoryId)
+            }
+          `,
+          variables: {
+            inventoryId: this.id
+          },
+        })
+        .then((result) => {
+          this.modalDelete.animation = false;
+          this.modalDelete.finish = true;
+          setTimeout(() => {
+            this.modalDelete.visible = false;
+            this.$router.push({ name: "Home" });
+          }, 1000);
+        })
+        .catch((error) => {
+          this.modalDelete.error = true;
+          setTimeout(() => {
+            this.modalDelete.visible = false;
+          }, 2000);
+        });
+    },
   },
   mounted() {
-    this.loadCategories();
     this.id = this.$route.params.id;
-    this.getData();
   },
 };
 </script>
@@ -332,7 +471,7 @@ select {
 }
 option:checked {
   background-color: var(--color-dark);
-  color:var(--color-clear);
+  color: var(--color-clear);
 }
 textarea {
   border: 0.1rem solid var(--border-input);
@@ -402,14 +541,16 @@ input[type="file"] {
   align-items: center;
   white-space: nowrap;
 }
-#year,#isbn {
+#year,
+#isbn {
   padding: 0 0 0 0.5rem;
   background-image: url(../icons/arrows_scroll.svg);
   background-repeat: no-repeat;
   background-position-x: right;
   background-position-y: center;
 }
-#year::-webkit-inner-spin-button, #isbn::-webkit-inner-spin-button {
+#year::-webkit-inner-spin-button,
+#isbn::-webkit-inner-spin-button {
   /* visibility: hidden; */
   opacity: 0;
 }

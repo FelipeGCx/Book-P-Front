@@ -72,6 +72,7 @@
           loading="lazy"
           oncontextmenu="return false"
           :alt="book.title"
+          onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d'"
         />
         <div class="icons">
           <svg
@@ -135,7 +136,8 @@
 <script>
 import Carousel from "@/components/Carousel.vue";
 import Slide from "@/components/Slide.vue";
-import "@/data.js";
+import gql from "graphql-tag";
+
 export default {
   name: "Home",
   components: {
@@ -144,8 +146,7 @@ export default {
   },
   data() {
     return {
-      isAdmin:false,
-      books: [],
+      isAdmin: false,
       filterBooks: [],
       dataInPage: [],
       elementsPerPage: 10,
@@ -157,14 +158,46 @@ export default {
       clickControl: false,
       idFocus: null,
       isVoid: false,
+      border:null,
       filter: "",
       carouselSlides: ["S01", "S02"],
+      InventoriesDetail: {
+        inventoriesDetail: {
+          id: "",
+          title: "",
+          author: "",
+          year: "",
+          category: "",
+          editorial: "",
+          poster: "",
+        },
+      },
     };
+  },
+  apollo: {
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            id
+            title
+            author
+            year
+            category
+            editorial
+            poster
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+      result() {
+        this.getData();
+      }
+    },
   },
   methods: {
     getData() {
-      // !HACER LA PETICIÓN DE LOS LIBROS
-      this.books = registers;
+      this.books = this.InventoriesDetail;
       this.filterBook();
     },
     filterBook() {
@@ -236,14 +269,14 @@ export default {
         this.clickControl = false;
       }
     },
-    clean(){
-      this.idFocus=0;
+    clean() {
+      this.idFocus = 0;
       this.focus = false;
     },
   },
   mounted() {
-    this.isAdmin=localStorage.getItem("isAdmin");
-    this.getData();
+    this.isAdmin = localStorage.getItem("isAdmin");
+    // this.$apollo.
   },
 };
 </script>

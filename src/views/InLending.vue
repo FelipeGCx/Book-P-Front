@@ -48,6 +48,8 @@
 
 <script>
 import TableLending from "@/components/TableLending.vue";
+import gql from "graphql-tag";
+
 import "@/loans.js";
 import "@/data.js";
 import "@/users.js";
@@ -71,6 +73,35 @@ export default {
       pages: null,
     };
   },
+  apollo: {
+    LoansDetail: {
+      query: gql`
+        query LoansDetail {
+          loansDetail {
+            id
+            idUser
+            idBook
+            dateStart
+            dateFinish
+          }
+        }
+      `,
+      update: (data) => data.loasnDetail,
+      result() {
+        this.getData();
+      },
+    },
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            title
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+    },
+  },
   methods: {
     totalPages() {
       return Math.ceil(this.loansF.length / this.elementsPerPage);
@@ -79,7 +110,7 @@ export default {
       // !HACER LA PETICIÓN DE LOS PRESTAMOS
       this.books = registers;
       this.users = usersData;
-      this.loans = allLoans;
+      this.loans = this.LoansDetail;
       let theDate = new Date().toLocaleString("es-CO");
       this.filterLoans = this.loans.filter(
         (loan) => loan.dateFinish <= theDate
@@ -135,7 +166,6 @@ export default {
   },
   mounted() {
     this.actualPage = parseInt(this.$route.params.id);
-    this.getData();
   },
   beforeUpdate() {
     this.actualPage = parseInt(this.$route.params.id);

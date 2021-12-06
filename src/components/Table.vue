@@ -1,7 +1,7 @@
 <template>
   <table>
     <tr class="header">
-      <th>ID</th>
+      <th class="m1">ID</th>
       <th>Titulo</th>
       <th class="m3">Autor</th>
       <th class="m2">Año</th>
@@ -12,7 +12,7 @@
       <th>Acciones</th>
     </tr>
     <tr v-for="(book, index) in books" :key="index">
-      <td>{{ book.id }}</td>
+      <td class="m1">{{ book.id }}</td>
       <td>{{ book.title }}</td>
       <td class="m3">{{ book.author }}</td>
       <td class="m2">{{ book.year }}</td>

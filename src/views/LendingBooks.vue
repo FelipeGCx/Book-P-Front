@@ -2,20 +2,28 @@
   <div class="lending">
     <div class="in-lending">
       <h1>En Prestamo</h1>
-      <SlideLoans class="slide_loans" :books="booksInLending" :inLending="true"/>
+      <SlideLoans
+        class="slide_loans"
+        :books="booksInLending"
+        :inLending="true"
+      />
     </div>
     <div class="history">
       <h1>Historial de Prestamos</h1>
-      <SlideLoans class="slide_loans" :books="booksHistory" :inLending="false"/>
+      <SlideLoans
+        class="slide_loans"
+        :books="booksHistory"
+        :inLending="false"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import SlideLoans from "@/components/SlideLoans.vue";
-import "@/data.js";
-import "@/loans.js";
+import gql from "graphql-tag";
 import moment from "moment";
+
 export default {
   name: "LendingBooks",
   components: {
@@ -27,23 +35,73 @@ export default {
       booksUser: [],
       booksInLending: [],
       booksHistory: [],
+      loansLoad: false,
+      booksLoad: false,
+      InventoriesDetail:null,
+      LoansByUserId:null,
     };
+  },
+  apollo: {
+    LoansByUserId: {
+      query: gql`
+        query LoansDetailById($userId: String!) {
+          loansDetailById(userId: $userId) {
+            id
+            idUser
+            idBook
+            dateStart
+            dateFinish
+          }
+        }
+      `,
+      variables() {
+        return {
+          userId: "1",
+        };
+      },
+      update: (data) => data.loansDetailById,
+      result() {
+        this.loansLoad = true;
+        this.getData();
+      },
+    },
+    InventoriesDetail: {
+      query: gql`
+        query InventoriesDetail {
+          inventoriesDetail {
+            id
+            title
+            author
+            year
+            category
+            editorial
+            poster
+          }
+        }
+      `,
+      update: (data) => data.inventoriesDetail,
+      result() {
+        this.booksLoad = true;
+        this.getData();
+      },
+    },
   },
   methods: {
     getData() {
-      let books = registers;
-      let loans = allLoans;
-      let loansUser = loans.filter((loan) => loan.idUser == this.id);
-      for (const key in loansUser) {
-        const element = loansUser[key];
-        let book = {
-          title: books.find((book) => book.id == element.idBook).title,
-          author: books.find((book) => book.id == element.idBook).author,
-          poster: books.find((book) => book.id == element.idBook).poster,
-          dateFinish: element.dateFinish,
-        };
-        this.booksUser.push(book);
-      }
+      if (this.booksLoad && this.loansLoad) {
+        let books = this.InventoriesDetail;
+        let loans = this.LoansByUserId;
+        for (const key in loans) {
+          const element = loans[key];
+          console.log(element);
+          let book = {
+            title: books.find((book) => book.id == element.idBook).title,
+            author: books.find((book) => book.id == element.idBook).author,
+            poster: books.find((book) => book.id == element.idBook).poster,
+            dateFinish: element.dateFinish,
+          };
+          this.booksUser.push(book);
+        }
       for (const key in this.booksUser) {
         const element = this.booksUser[key];
         moment.locale("es-CO");
@@ -58,21 +116,24 @@ export default {
           this.booksInLending.push(element);
         }
       }
-      let bookNothing = [{
-          title: 'No Tienes Libros',
+      let bookNothing = [
+        {
+          title: "No Tienes Libros",
           author: null,
-          poster: 'https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d',
+          poster:
+            "https://firebasestorage.googleapis.com/v0/b/proyectociclo4-447aa.appspot.com/o/NotFound.svg?alt=media&token=1d1ae5f3-146d-4edf-bb6a-5fff39c6b96d",
           dateFinish: null,
-        }];
-        console.log(this.booksInLending.length);
-        console.log(this.booksHistory.length);
-      this.booksInLending= this.booksInLending.length == 0 ? bookNothing : this.booksInLending ;
-      this.booksHistory= this.booksHistory.length == 0 ? bookNothing : this.booksHistory;
+        },
+      ];
+      this.booksInLending =
+        this.booksInLending.length == 0 ? bookNothing : this.booksInLending;
+      this.booksHistory =
+        this.booksHistory.length == 0 ? bookNothing : this.booksHistory;
+      }
     },
   },
   mounted() {
     this.id = this.$route.params.id;
-    this.getData();
   },
 };
 </script>
@@ -83,7 +144,7 @@ export default {
     text-align: initial;
     padding-left: 4.3rem;
   }
-  .lending{
+  .lending {
     margin: 0 6vw;
   }
 }
@@ -91,7 +152,7 @@ export default {
   h1 {
     text-align: center;
   }
-  .lending{
+  .lending {
     margin: 0 6vw;
   }
 }
@@ -99,7 +160,7 @@ export default {
   h1 {
     text-align: center;
   }
-  .lending{
+  .lending {
     margin: 0 14vw;
   }
 }
